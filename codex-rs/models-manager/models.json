@@ -1,0 +1,100 @@
+{
+  "models": [
+    {
+      "prefer_websockets": false,
+      "support_verbosity": false,
+      "default_verbosity": null,
+      "apply_patch_tool_type": "freeform",
+      "web_search_tool_type": null,
+      "input_modalities": ["text"],
+      "supports_image_detail_original": false,
+      "truncation_policy": { "mode": "tokens", "limit": 10000 },
+      "supports_parallel_tool_calls": true,
+      "context_window": 1000000,
+      "max_context_window": 1000000,
+      "auto_compact_token_limit": null,
+      "reasoning_summary_format": null,
+      "default_reasoning_summary": null,
+      "slug": "deepseek-v4-flash",
+      "display_name": "DeepSeek V4 Flash",
+      "description": "Быстрая и эффективная модель DeepSeek для повседневных задач",
+      "default_reasoning_level": "medium",
+      "supported_reasoning_levels": [
+        {"effort": "low", "description": "Быстрые ответы с облегчённым анализом"},
+        {"effort": "medium", "description": "Баланс скорости и глубины анализа"},
+        {"effort": "high", "description": "Глубокий анализ для сложных задач"}
+      ],
+      "shell_type": "shell_command",
+      "visibility": "list",
+      "minimal_client_version": "0.1.0",
+      "supported_in_api": true,
+      "availability_nux": null,
+      "upgrade": null,
+      "priority": 0,
+      "include_skills_usage_instructions": false,
+      "base_instructions": "Вы — DeepSeek CLI, агент для командной строки на базе DeepSeek V4 Flash.\n\n# Личность\n\nВы умный, любознательный и внимательный помощник. Вы помогаете пользователю чувствовать себя увереннее в своих идеях. Вы проактивны: реализуете по мере обучения, держите пользователя в курсе.\n\n# Общие правила\n\n- Для поиска используйте `rg` или `rg --files`.\n- Распараллеливайте вызовы инструментов.\n- Сохраняйте изменения сфокусированными на задаче.\n- Добавляйте абстракции только когда они уменьшают сложность.\n\n# Автономность\n\nОставайтесь с задачей, пока она не будет полностью решена. Не останавливайтесь на анализе или половинчатых исправлениях.\n",
+      "model_messages": {
+        "instructions_template": "Вы — DeepSeek CLI на базе DeepSeek V4 Flash.\n\n{{ personality }}\n\n# Общие правила\n- Для поиска используйте `rg` или `rg --files`.\n- Распараллеливайте вызовы инструментов.\n- Сохраняйте изменения сфокусированными.\n\n# Автономность\nОставайтесь с задачей до полного решения.\n",
+        "instructions_variables": {
+          "personality_default": "",
+          "personality_friendly": "# Личность\nВы умный, любознательный и внимательный помощник. Вы помогаете пользователю чувствовать себя увереннее.\n",
+          "personality_pragmatic": "# Личность\nВы прагматичный и эффективный инженер. Вы серьёзно относитесь к качеству кода, общаетесь прямо и по делу.\n"
+        }
+      },
+      "experimental_supported_tools": [],
+      "available_in_plans": [],
+      "supports_search_tool": false,
+      "service_tiers": [],
+      "additional_speed_tiers": [],
+      "supports_reasoning_summaries": false
+    },
+    {
+      "prefer_websockets": false,
+      "support_verbosity": false,
+      "default_verbosity": null,
+      "apply_patch_tool_type": "freeform",
+      "web_search_tool_type": null,
+      "input_modalities": ["text"],
+      "supports_image_detail_original": false,
+      "truncation_policy": { "mode": "tokens", "limit": 10000 },
+      "supports_parallel_tool_calls": true,
+      "context_window": 1000000,
+      "max_context_window": 1000000,
+      "auto_compact_token_limit": null,
+      "reasoning_summary_format": null,
+      "default_reasoning_summary": null,
+      "slug": "deepseek-v4-pro",
+      "display_name": "DeepSeek V4 Pro",
+      "description": "Мощная модель DeepSeek для сложных задач и глубокого анализа",
+      "default_reasoning_level": "high",
+      "supported_reasoning_levels": [
+        {"effort": "medium", "description": "Баланс скорости и глубины анализа"},
+        {"effort": "high", "description": "Глубокий анализ для сложных задач"},
+        {"effort": "max", "description": "Максимальная глубина анализа"}
+      ],
+      "shell_type": "shell_command",
+      "visibility": "list",
+      "minimal_client_version": "0.1.0",
+      "supported_in_api": true,
+      "availability_nux": null,
+      "upgrade": null,
+      "priority": 1,
+      "include_skills_usage_instructions": false,
+      "base_instructions": "Вы — DeepSeek CLI, агент для командной строки на базе DeepSeek V4 Pro.\n\n# Личность\n\nВы прагматичный и эффективный инженер. Вы серьёзно относитесь к качеству кода, общаетесь прямо и по делу, держите пользователя в курсе действий без лишних деталей.\n\n# Общие правила\n\n- Для поиска используйте `rg` или `rg --files`.\n- Распараллеливайте вызовы инструментов.\n- Сохраняйте изменения сфокусированными на задаче.\n- Добавляйте абстракции только когда они уменьшают сложность.\n\n# Автономность\n\nОставайтесь с задачей, пока она не будет полностью решена.\n",
+      "model_messages": {
+        "instructions_template": "Вы — DeepSeek CLI на базе DeepSeek V4 Pro.\n\n{{ personality }}\n\n# Общие правила\n- Для поиска используйте `rg` или `rg --files`.\n- Распараллеливайте вызовы инструментов.\n- Сохраняйте изменения сфокусированными.\n\n# Автономность\nОставайтесь с задачей до полного решения.\n",
+        "instructions_variables": {
+          "personality_default": "",
+          "personality_friendly": "# Личность\nВы умный и любознательный помощник.\n",
+          "personality_pragmatic": "# Личность\nВы прагматичный и эффективный инженер. Вы серьёзно относитесь к качеству кода, общаетесь прямо и по делу.\n"
+        }
+      },
+      "experimental_supported_tools": [],
+      "available_in_plans": [],
+      "supports_search_tool": false,
+      "service_tiers": [],
+      "additional_speed_tiers": [],
+      "supports_reasoning_summaries": false
+    }
+  ]
+}
