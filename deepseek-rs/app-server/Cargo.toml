@@ -1,0 +1,135 @@
+[package]
+name = "deepseek-app-server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "deepseek-app-server"
+path = "src/main.rs"
+
+[[bin]]
+name = "deepseek-app-server-test-notify-capture"
+path = "src/bin/notify_capture.rs"
+
+[lib]
+name = "deepseek_app_server"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+base64 = { workspace = true }
+axum = { workspace = true, default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+    "ws",
+] }
+deepseek-analytics = { workspace = true }
+deepseek-arg0 = { workspace = true }
+deepseek-cloud-config = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-connectors = { workspace = true }
+deepseek-core = { workspace = true }
+deepseek-core-plugins = { workspace = true }
+deepseek-home = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-extension-api = { workspace = true }
+deepseek-external-agent-migration = { workspace = true }
+deepseek-external-agent-sessions = { workspace = true }
+deepseek-features = { workspace = true }
+deepseek-goal-extension = { workspace = true }
+deepseek-guardian = { workspace = true }
+deepseek-git-utils = { workspace = true }
+deepseek-file-watcher = { workspace = true }
+deepseek-hooks = { workspace = true }
+deepseek-otel = { workspace = true }
+deepseek-plugin = { workspace = true }
+deepseek-shell-command = { workspace = true }
+deepseek-skills-extension = { workspace = true }
+deepseek-utils-cli = { workspace = true }
+deepseek-utils-pty = { workspace = true }
+deepseek-backend-client = { workspace = true }
+deepseek-file-search = { workspace = true }
+deepseek-chatgpt = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-image-generation-extension = { workspace = true }
+deepseek-memories-extension = { workspace = true }
+deepseek-web-search-extension = { workspace = true }
+deepseek-memories-write = { workspace = true }
+deepseek-mcp = { workspace = true }
+deepseek-mcp-extension = { workspace = true }
+deepseek-model-provider = { workspace = true }
+deepseek-models-manager = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-app-server-protocol = { workspace = true }
+deepseek-app-server-transport = { workspace = true }
+deepseek-feedback = { workspace = true }
+deepseek-rmcp-client = { workspace = true }
+deepseek-rollout = { workspace = true }
+deepseek-sandboxing = { workspace = true }
+deepseek-state = { workspace = true }
+deepseek-thread-store = { workspace = true }
+deepseek-tools = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+deepseek-utils-json-to-toml = { workspace = true }
+deepseek-utils-path-uri = { workspace = true }
+chrono = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+futures = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+thiserror = { workspace = true }
+time = { workspace = true }
+toml = { workspace = true }
+toml_edit = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+    "signal",
+] }
+tokio-util = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+tracing-subscriber = { workspace = true, features = ["env-filter", "fmt", "json"] }
+uuid = { workspace = true, features = ["serde", "v7"] }
+
+[target.'cfg(windows)'.dependencies]
+codex-windows-sandbox = { workspace = true }
+
+[dev-dependencies]
+app_test_support = { workspace = true }
+axum = { workspace = true, default-features = false, features = [
+    "http1",
+    "json",
+    "tokio",
+] }
+base64 = { workspace = true }
+deepseek-model-provider-info = { workspace = true }
+deepseek-utils-cargo-bin = { workspace = true }
+core_test_support = { workspace = true }
+flate2 = { workspace = true }
+hmac = { workspace = true }
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+pretty_assertions = { workspace = true }
+reqwest = { workspace = true, features = ["rustls-tls"] }
+rmcp = { workspace = true, default-features = false, features = [
+    "elicitation",
+    "server",
+    "transport-streamable-http-server",
+] }
+serial_test = { workspace = true }
+sha2 = { workspace = true }
+shlex = { workspace = true }
+tar = { workspace = true }
+tokio-tungstenite = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+url = { workspace = true }
+wiremock = { workspace = true }

@@ -1,0 +1,35 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-model-provider"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "deepseek_model_provider"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-api = { workspace = true }
+deepseek-agent-identity = { workspace = true }
+deepseek-aws-auth = { workspace = true }
+deepseek-client = { workspace = true }
+deepseek-feedback = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-model-provider-info = { workspace = true }
+deepseek-models-manager = { workspace = true }
+deepseek-otel = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-response-debug-context = { workspace = true }
+http = { workspace = true }
+tokio = { workspace = true, features = ["sync", "time"] }
+tracing = { workspace = true, features = ["log"] }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt"] }
+wiremock = { workspace = true }

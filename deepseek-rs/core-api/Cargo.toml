@@ -1,0 +1,30 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-core-api"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "deepseek_core_api"
+path = "src/lib.rs"
+test = false
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-app-server-protocol = { workspace = true }
+deepseek-arg0 = { workspace = true }
+deepseek-analytics = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-core = { workspace = true }
+deepseek-extension-api = { workspace = true }
+deepseek-home = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-features = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-model-provider-info = { workspace = true }
+deepseek-models-manager = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }

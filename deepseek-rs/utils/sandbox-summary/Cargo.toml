@@ -1,0 +1,21 @@
+[package]
+name = "deepseek-utils-sandbox-summary"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-core = { workspace = true }
+deepseek-model-provider-info = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+
+[dev-dependencies]
+deepseek-utils-absolute-path = { workspace = true }
+pretty_assertions = { workspace = true }
+
+[lib]
+doctest = false

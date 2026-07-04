@@ -1,0 +1,38 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-tools"
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-code-mode = { workspace = true }
+deepseek-connectors = { workspace = true }
+deepseek-features = { workspace = true }
+deepseek-file-system = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+deepseek-utils-output-truncation = { workspace = true }
+deepseek-utils-pty = { workspace = true }
+deepseek-utils-string = { workspace = true }
+jsonptr = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = [
+    "base64",
+    "macros",
+    "schemars",
+    "server",
+] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+urlencoding = { workspace = true }
+
+[dev-dependencies]
+deepseek-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+
+[lib]
+doctest = false

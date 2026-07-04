@@ -1,0 +1,45 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-core-skills"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "deepseek_core_skills"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+deepseek-analytics = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-context-fragments = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-model-provider = { workspace = true }
+deepseek-otel = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-shell-command = { workspace = true }
+deepseek-skills = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+deepseek-utils-output-truncation = { workspace = true }
+deepseek-utils-path-uri = { workspace = true }
+deepseek-utils-plugins = { workspace = true }
+dirs = { workspace = true }
+dunce = { workspace = true }
+futures = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+shlex = { workspace = true }
+tokio = { workspace = true, features = ["fs", "macros", "rt"] }
+toml = { workspace = true }
+tracing = { workspace = true }
+zip = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }

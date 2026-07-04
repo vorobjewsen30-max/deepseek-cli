@@ -1,0 +1,19 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-guardian"
+version.workspace = true
+
+[lib]
+name = "deepseek_guardian"
+path = "src/lib.rs"
+test = false
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-core = { workspace = true }
+deepseek-extension-api = { workspace = true }
+deepseek-protocol = { workspace = true }

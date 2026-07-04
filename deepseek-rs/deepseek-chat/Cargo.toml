@@ -1,0 +1,30 @@
+[package]
+name = "deepseek-chatgpt"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive"] }
+deepseek-connectors = { workspace = true }
+deepseek-core = { workspace = true }
+deepseek-git-utils = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-model-provider = { workspace = true }
+deepseek-plugin = { workspace = true }
+deepseek-utils-cli = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+tokio = { workspace = true, features = ["full"] }
+
+[dev-dependencies]
+deepseek-utils-cargo-bin = { workspace = true }
+pretty_assertions = { workspace = true }
+serde_json = { workspace = true }
+tempfile = { workspace = true }
+
+[lib]
+doctest = false

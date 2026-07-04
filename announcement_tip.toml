@@ -1,0 +1,9 @@
+# Объявления для DeepSeek CLI TUI.
+# Каждая запись [[announcements]] проверяется по порядку; показывается последняя подходящая.
+# Даты в UTC, формат YYYY-MM-DD. from_date включительно, to_date исключительно.
+# version_regex проверяет версию CLI (env!("CARGO_PKG_VERSION")); без неё — для всех версий.
+
+[[announcements]]
+content = "Добро пожаловать в DeepSeek CLI! Используйте /model для выбора между deepseek-v4-flash и deepseek-v4-pro."
+version_regex = "^0\\."
+to_date = "2027-12-31"

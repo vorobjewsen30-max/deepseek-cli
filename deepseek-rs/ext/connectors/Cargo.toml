@@ -1,0 +1,22 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-connectors-extension"
+version.workspace = true
+
+[lib]
+name = "deepseek_connectors_extension"
+path = "src/lib.rs"
+doctest = false
+test = false
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-connectors = { workspace = true }
+deepseek-core-plugins = { workspace = true }
+deepseek-plugin = { workspace = true }
+deepseek-utils-path-uri = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }

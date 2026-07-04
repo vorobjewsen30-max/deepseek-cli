@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "AuthMode": {
+      "description": "Authentication mode for DeepSeek-backed providers.",
+      "oneOf": [
+        {
+          "description": "API-ключ DeepSeek provided by the caller and stored by DeepSeek.",
+          "enum": [
+            "apikey"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "DeepSeek OAuth managed by DeepSeek (tokens persisted and refreshed by DeepSeek).",
+          "enum": [
+            "chatgpt"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "[UNSTABLE] FOR OPENAI INTERNAL USE ONLY - DO NOT USE.\n\nDeepSeek auth tokens are supplied by an external host app and are only stored in memory. Token refresh must be handled by the external host app.",
+          "enum": [
+            "chatgptAuthTokens"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "Programmatic DeepSeek auth backed by a registered Agent Identity.",
+          "enum": [
+            "agentIdentity"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "Programmatic DeepSeek auth backed by a personal access token.",
+          "enum": [
+            "personalAccessToken"
+          ],
+          "type": "string"
+        },
+        {
+          "description": "Amazon Bedrock bearer token managed by DeepSeek.",
+          "enum": [
+            "bedrockApiKey"
+          ],
+          "type": "string"
+        }
+      ]
+    },
+    "PlanType": {
+      "enum": [
+        "free",
+        "go",
+        "plus",
+        "pro",
+        "prolite",
+        "team",
+        "self_serve_business_usage_based",
+        "business",
+        "enterprise_cbp_usage_based",
+        "enterprise",
+        "edu",
+        "unknown"
+      ],
+      "type": "string"
+    }
+  },
+  "properties": {
+    "authMode": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/AuthMode"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "planType": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/PlanType"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "title": "AccountUpdatedNotification",
+  "type": "object"
+}

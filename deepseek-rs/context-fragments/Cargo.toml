@@ -1,0 +1,18 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-context-fragments"
+version.workspace = true
+
+[lib]
+name = "deepseek_context_fragments"
+path = "src/lib.rs"
+test = false
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-protocol = { workspace = true }
+deepseek-utils-string = { workspace = true }

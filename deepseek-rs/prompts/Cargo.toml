@@ -1,0 +1,25 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-prompts"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "deepseek_prompts"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+deepseek-context-fragments = { workspace = true }
+deepseek-git-utils = { workspace = true }
+deepseek-execpolicy = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+deepseek-utils-template = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

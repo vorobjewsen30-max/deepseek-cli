@@ -1,0 +1,168 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-core"
+version.workspace = true
+
+[lib]
+name = "deepseek_core"
+path = "src/lib.rs"
+
+[[bin]]
+name = "codex-write-config-schema"
+path = "src/bin/config_schema.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+arc-swap = { workspace = true }
+async-channel = { workspace = true }
+base64 = { workspace = true }
+bm25 = { workspace = true }
+chrono = { workspace = true, features = ["serde"] }
+clap = { workspace = true, features = ["derive"] }
+deepseek-analytics = { workspace = true }
+deepseek-agent-graph-store = { workspace = true }
+deepseek-api = { workspace = true }
+deepseek-app-server-protocol = { workspace = true }
+deepseek-apply-patch = { workspace = true }
+deepseek-async-utils = { workspace = true }
+deepseek-code-mode = { workspace = true }
+deepseek-connectors = { workspace = true }
+deepseek-context-fragments = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-core-plugins = { workspace = true }
+deepseek-core-skills = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-extension-api = { workspace = true }
+deepseek-features = { workspace = true }
+deepseek-feedback = { workspace = true }
+deepseek-file-system = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-memories-read = { workspace = true }
+deepseek-mcp = { workspace = true }
+deepseek-model-provider-info = { workspace = true }
+deepseek-models-manager = { workspace = true }
+deepseek-shell-command = { workspace = true }
+deepseek-execpolicy = { workspace = true }
+deepseek-git-utils = { workspace = true }
+deepseek-hooks = { workspace = true }
+deepseek-install-context = { workspace = true }
+deepseek-network-proxy = { workspace = true }
+deepseek-otel = { workspace = true }
+deepseek-plugin = { workspace = true }
+deepseek-model-provider = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-response-debug-context = { workspace = true }
+deepseek-prompts = { workspace = true }
+deepseek-rollout = { workspace = true }
+deepseek-rollout-trace = { workspace = true }
+deepseek-rmcp-client = { workspace = true }
+deepseek-sandboxing = { workspace = true }
+deepseek-state = { workspace = true }
+deepseek-terminal-detection = { workspace = true }
+deepseek-thread-store = { workspace = true }
+deepseek-tools = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+deepseek-utils-cache = { workspace = true }
+deepseek-utils-image = { workspace = true }
+deepseek-utils-home-dir = { workspace = true }
+deepseek-utils-output-truncation = { workspace = true }
+codex-utils-path = { workspace = true }
+deepseek-utils-path-uri = { workspace = true }
+deepseek-utils-plugins = { workspace = true }
+deepseek-utils-pty = { workspace = true }
+deepseek-utils-string = { workspace = true }
+deepseek-utils-stream-parser = { workspace = true }
+codex-windows-sandbox = { package = "codex-windows-sandbox", path = "../windows-sandbox-rs" }
+csv = { workspace = true }
+dirs = { workspace = true }
+dunce = { workspace = true }
+eventsource-stream = { workspace = true }
+futures = { workspace = true }
+http = { workspace = true }
+iana-time-zone = { workspace = true }
+image = { workspace = true, features = ["jpeg", "png", "webp"] }
+indexmap = { workspace = true }
+libc = { workspace = true }
+once_cell = { workspace = true }
+rand = { workspace = true }
+regex-lite = { workspace = true }
+reqwest = { workspace = true, features = ["json", "stream"] }
+rmcp = { workspace = true, default-features = false, features = [
+    "base64",
+    "macros",
+    "schemars",
+    "server",
+] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha1 = { workspace = true }
+shlex = { workspace = true }
+similar = { workspace = true }
+tempfile = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "process",
+    "rt-multi-thread",
+    "signal",
+] }
+tokio-util = { workspace = true, features = ["rt"] }
+tokio-tungstenite = { workspace = true }
+toml = { workspace = true }
+toml_edit = { workspace = true }
+tracing = { workspace = true, features = ["log"] }
+url = { workspace = true }
+uuid = { workspace = true, features = ["serde", "v4", "v5"] }
+which = { workspace = true }
+whoami = { workspace = true }
+
+# Build OpenSSL from source for musl builds.
+[target.x86_64-unknown-linux-musl.dependencies]
+openssl-sys = { workspace = true, features = ["vendored"] }
+
+# Build OpenSSL from source for musl builds.
+[target.aarch64-unknown-linux-musl.dependencies]
+openssl-sys = { workspace = true, features = ["vendored"] }
+
+[target.'cfg(unix)'.dependencies]
+deepseek-shell-escalation = { workspace = true }
+
+[dev-dependencies]
+assert_cmd = { workspace = true }
+assert_matches = { workspace = true }
+deepseek-image-generation-extension = { workspace = true }
+deepseek-home = { workspace = true }
+deepseek-otel = { workspace = true }
+deepseek-test-binary-support = { workspace = true }
+deepseek-utils-cargo-bin = { workspace = true }
+deepseek-web-search-extension = { workspace = true }
+core_test_support = { workspace = true }
+ctor = { workspace = true }
+insta = { workspace = true }
+maplit = { workspace = true }
+opentelemetry = { workspace = true }
+predicates = { workspace = true }
+pretty_assertions = { workspace = true }
+test-case = "3.3.1"
+opentelemetry_sdk = { workspace = true, features = [
+    "experimental_metrics_custom_reader",
+    "metrics",
+] }
+serial_test = { workspace = true }
+tempfile = { workspace = true }
+test-log = { workspace = true }
+tracing-opentelemetry = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-test = { workspace = true, features = ["no-env-filter"] }
+walkdir = { workspace = true }
+wiremock = { workspace = true }
+zstd = { workspace = true }
+
+[package.metadata.cargo-shear]
+ignored = ["openssl-sys"]
+ignored-paths = ["tests/remote_env_windows/*.rs"]

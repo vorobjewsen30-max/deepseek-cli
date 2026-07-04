@@ -1,0 +1,7 @@
+load("//:defs.bzl", "codex_rust_crate")
+
+codex_rust_crate(
+    name = "deepseek-experimental-api-macros",
+    crate_name = "deepseek_experimental_api_macros",
+    proc_macro = True,
+)

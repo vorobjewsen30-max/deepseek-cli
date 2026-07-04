@@ -1,0 +1,37 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-mcp-extension"
+version.workspace = true
+
+[lib]
+name = "deepseek_mcp_extension"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-core = { workspace = true }
+deepseek-core-plugins = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-connectors-extension = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-extension-api = { workspace = true }
+deepseek-features = { workspace = true }
+deepseek-mcp = { workspace = true }
+deepseek-plugin = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+deepseek-utils-path-uri = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true, features = ["sync"] }
+
+[dev-dependencies]
+deepseek-login = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

@@ -1,0 +1,33 @@
+[package]
+name = "deepseek-arg0"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "deepseek_arg0"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+deepseek-apply-patch = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-install-context = { workspace = true }
+deepseek-linux-sandbox = { workspace = true }
+deepseek-sandboxing = { workspace = true }
+deepseek-shell-escalation = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+deepseek-utils-home-dir = { workspace = true }
+dotenvy = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+
+[target.'cfg(windows)'.dependencies]
+codex-windows-sandbox = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }

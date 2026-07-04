@@ -1,0 +1,47 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-mcp"
+version.workspace = true
+
+[lib]
+name = "deepseek_mcp"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+arc-swap = { workspace = true }
+async-channel = { workspace = true }
+deepseek-async-utils = { workspace = true }
+deepseek-api = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-connectors = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-model-provider = { workspace = true }
+deepseek-otel = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-rmcp-client = { workspace = true }
+deepseek-utils-path-uri = { workspace = true }
+deepseek-utils-plugins = { workspace = true }
+futures = { workspace = true }
+regex-lite = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = ["base64", "macros", "schemars", "server"] }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+sha1 = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["io-util", "macros", "rt-multi-thread"] }
+tokio-util = { workspace = true, features = ["rt"] }
+tracing = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+deepseek-plugin = { workspace = true }
+pretty_assertions = { workspace = true }
+rmcp = { workspace = true, default-features = false, features = ["base64", "macros", "schemars", "server"] }
+tempfile = { workspace = true }

@@ -1,0 +1,59 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-core-plugins"
+version.workspace = true
+
+[lib]
+doctest = false
+name = "deepseek_core_plugins"
+path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+deepseek-analytics = { workspace = true }
+deepseek-app-server-protocol = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-connectors = { workspace = true }
+deepseek-core-skills = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-git-utils = { workspace = true }
+deepseek-hooks = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-mcp = { workspace = true }
+deepseek-model-provider = { workspace = true }
+deepseek-otel = { workspace = true }
+deepseek-plugin = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-tools = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+codex-utils-path = { workspace = true }
+deepseek-utils-path-uri = { workspace = true }
+deepseek-utils-plugins = { workspace = true }
+chrono = { workspace = true }
+dirs = { workspace = true }
+flate2 = { workspace = true }
+reqwest = { workspace = true }
+regex = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+tar = { workspace = true }
+tempfile = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["fs", "macros", "rt", "time"] }
+toml = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+zip = { workspace = true }
+
+[dev-dependencies]
+libc = { workspace = true }
+pretty_assertions = { workspace = true }
+tempfile = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-test = { workspace = true, features = ["no-env-filter"] }
+wiremock = { workspace = true }

@@ -1,0 +1,18 @@
+[package]
+edition.workspace = true
+license.workspace = true
+name = "deepseek-utils-output-truncation"
+version.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-protocol = { workspace = true }
+deepseek-utils-string = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
+
+[lib]
+doctest = false

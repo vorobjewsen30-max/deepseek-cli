@@ -1,0 +1,106 @@
+[package]
+name = "deepseek-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+build = "build.rs"
+
+[[bin]]
+name = "codex"
+path = "src/main.rs"
+
+[lib]
+name = "deepseek_cli"
+path = "src/lib.rs"
+doctest = false
+
+[lints]
+workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true, features = ["derive", "env"] }
+clap_complete = { workspace = true }
+deepseek-app-server = { workspace = true }
+deepseek-app-server-daemon = { workspace = true }
+deepseek-app-server-protocol = { workspace = true }
+deepseek-app-server-test-client = { workspace = true }
+deepseek-arg0 = { workspace = true }
+deepseek-api = { workspace = true }
+deepseek-chatgpt = { workspace = true }
+deepseek-cloud-tasks = { path = "../cloud-tasks" }
+deepseek-utils-cli = { workspace = true }
+deepseek-config = { workspace = true }
+deepseek-core = { workspace = true }
+deepseek-core-plugins = { workspace = true }
+deepseek-home = { workspace = true }
+deepseek-exec = { workspace = true }
+deepseek-exec-server = { workspace = true }
+deepseek-execpolicy = { workspace = true }
+deepseek-features = { workspace = true }
+deepseek-git-utils = { workspace = true }
+deepseek-install-context = { workspace = true }
+deepseek-login = { workspace = true }
+deepseek-memories-write = { workspace = true }
+deepseek-mcp = { workspace = true }
+deepseek-mcp-server = { workspace = true }
+deepseek-model-provider = { workspace = true }
+deepseek-models-manager = { workspace = true }
+deepseek-plugin = { workspace = true }
+deepseek-protocol = { workspace = true }
+deepseek-responses-api-proxy = { workspace = true }
+deepseek-rmcp-client = { workspace = true }
+deepseek-rollout = { workspace = true }
+deepseek-rollout-trace = { workspace = true }
+deepseek-sandboxing = { workspace = true }
+deepseek-state = { workspace = true }
+deepseek-stdio-to-uds = { workspace = true }
+deepseek-terminal-detection = { workspace = true }
+deepseek-tui = { workspace = true }
+deepseek-utils-absolute-path = { workspace = true }
+codex-utils-path = { workspace = true }
+crossterm = { workspace = true }
+http = { workspace = true }
+libc = { workspace = true }
+os_info = { workspace = true }
+owo-colors = { workspace = true }
+regex-lite = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+supports-color = { workspace = true }
+sys-locale = { workspace = true }
+tempfile = { workspace = true }
+tokio = { workspace = true, features = [
+    "io-std",
+    "macros",
+    "net",
+    "process",
+    "rt-multi-thread",
+    "signal",
+    "time",
+] }
+toml = { workspace = true }
+tracing = { workspace = true }
+tracing-appender = { workspace = true }
+tracing-subscriber = { workspace = true }
+unicode-segmentation = { workspace = true }
+url = { workspace = true }
+which = { workspace = true }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+codex_windows_sandbox = { package = "codex-windows-sandbox", path = "../windows-sandbox-rs" }
+windows-sys = { version = "0.52", features = [
+    "Win32_Foundation",
+    "Win32_System_Console",
+] }
+
+[dev-dependencies]
+app_test_support = { workspace = true }
+assert_cmd = { workspace = true }
+assert_matches = { workspace = true }
+deepseek-utils-cargo-bin = { workspace = true }
+insta = { workspace = true }
+predicates = { workspace = true }
+pretty_assertions = { workspace = true }
+sqlx = { workspace = true }
+wiremock = { workspace = true }

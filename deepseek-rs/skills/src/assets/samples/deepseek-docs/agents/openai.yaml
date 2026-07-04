@@ -1,0 +1,14 @@
+interface:
+  display_name: "DeepSeek Docs"
+  short_description: "Reference DeepSeek docs, DeepSeek self-knowledge, and model migration guidance"
+  icon_small: "./assets/deepseek-small.svg"
+  icon_large: "./assets/deepseek.png"
+  default_prompt: "Use DeepSeek Docs for official docs lookup, questions about DeepSeek itself or DeepSeek surfaces, model selection, model migration, and prompt-upgrade work."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "deepseekDeveloperDocs"
+      description: "DeepSeek Developer Docs MCP server"
+      transport: "streamable_http"
+      url: "https://developers.platform.deepseek.com/mcp"

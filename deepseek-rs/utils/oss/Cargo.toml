@@ -1,0 +1,17 @@
+[package]
+name = "deepseek-utils-oss"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+deepseek-core = { workspace = true }
+deepseek-lmstudio = { workspace = true }
+deepseek-model-provider-info = { workspace = true }
+deepseek-ollama = { workspace = true }
+
+[lib]
+doctest = false
