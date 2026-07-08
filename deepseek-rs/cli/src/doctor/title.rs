@@ -135,7 +135,7 @@ fn terminal_title_item_id(item: &str) -> Option<&'static str> {
         "context-used" | "context-usage" => Some("context-used"),
         "five-hour-limit" => Some("five-hour-limit"),
         "weekly-limit" => Some("weekly-limit"),
-        "codex-version" => Some("codex-version"),
+        "deepseek-version" => Some("deepseek-version"),
         "used-tokens" => Some("used-tokens"),
         "total-input-tokens" => Some("total-input-tokens"),
         "total-output-tokens" => Some("total-output-tokens"),

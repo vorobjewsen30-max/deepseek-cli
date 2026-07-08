@@ -49,7 +49,7 @@ impl SandboxSetupCommand {
         if self.elevated_sandbox_level {
             Ok(SandboxSetupLevel::Elevated)
         } else {
-            anyhow::bail!("`codex sandbox setup` currently requires --elevated");
+            anyhow::bail!("`deepseek sandbox setup` currently requires --elevated");
         }
     }
 }
@@ -150,7 +150,7 @@ mod tests {
             "--user",
             "DOMAIN\\alice",
             "--deepseek-home",
-            r"C:\Users\alice\.codex",
+            r"C:\Users\alice\.deepseek",
         ])
         .expect("parse");
 
@@ -159,7 +159,7 @@ mod tests {
         assert!(!command.current_user);
         assert_eq!(
             command.deepseek_home.as_deref(),
-            Some(std::path::Path::new(r"C:\Users\alice\.codex"))
+            Some(std::path::Path::new(r"C:\Users\alice\.deepseek"))
         );
     }
 
@@ -188,7 +188,7 @@ mod tests {
             "--user".to_string(),
             r"DOMAIN\alice".to_string(),
             "--deepseek-home".to_string(),
-            r"C:\Users\alice\.codex".to_string(),
+            r"C:\Users\alice\.deepseek".to_string(),
         ])
         .expect("parse")
         .expect("setup command");

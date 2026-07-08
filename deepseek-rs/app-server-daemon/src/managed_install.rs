@@ -21,7 +21,7 @@ pub(crate) fn managed_codex_bin(deepseek_home: &Path) -> PathBuf {
         .join("packages")
         .join("standalone")
         .join("current")
-        .join(managed_codex_file_name())
+        .join(managed_deepseek_cli_file_name())
 }
 
 #[cfg(unix)]
@@ -84,9 +84,8 @@ pub(crate) fn executable_identity_from_bytes(bytes: &[u8]) -> ExecutableIdentity
     }
 }
 
-fn managed_codex_file_name() -> &'static str {
-    if cfg!(windows) { "codex.exe" } else { "codex" }
-}
+fn managed_deepseek_cli_file_name() -> &'static str {
+    if cfg!(windows) { "deepseek-cli.exe" } else { "deepseek-cli" }
 
 #[cfg(unix)]
 fn parse_codex_version(output: &str) -> Result<String> {

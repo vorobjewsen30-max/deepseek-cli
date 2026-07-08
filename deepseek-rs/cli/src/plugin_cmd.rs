@@ -35,7 +35,7 @@ const OPENAI_BUNDLED_ALPHA_MARKETPLACE_NAME: &str = "deepseek-bundled-alpha";
 const OPENAI_PRIMARY_RUNTIME_MARKETPLACE_NAME: &str = "deepseek-primary-runtime";
 
 #[derive(Debug, Parser)]
-#[command(bin_name = "codex plugin")]
+#[command(bin_name = "deepseek plugin")]
 pub struct PluginCli {
     #[clap(flatten)]
     pub config_overrides: CliConfigOverrides,
@@ -67,8 +67,8 @@ pub enum PluginSubcommand {
 
 #[derive(Debug, Parser)]
 #[command(
-    bin_name = "codex plugin add",
-    after_help = "Examples:\n  codex plugin add sample@debug\n  codex plugin add sample --marketplace debug"
+    bin_name = "deepseek plugin add",
+    after_help = "Examples:\n  deepseek plugin add sample@debug\n  deepseek plugin add sample --marketplace debug"
 )]
 pub struct AddPluginArgs {
     /// Plugin selector to install: either PLUGIN@MARKETPLACE or PLUGIN with --marketplace.
@@ -86,8 +86,8 @@ pub struct AddPluginArgs {
 
 #[derive(Debug, Parser)]
 #[command(
-    bin_name = "codex plugin list",
-    after_help = "Examples:\n  codex plugin list\n  codex plugin list --marketplace debug\n  codex plugin list --json\n  codex plugin list --available --json"
+    bin_name = "deepseek plugin list",
+    after_help = "Examples:\n  deepseek plugin list\n  deepseek plugin list --marketplace debug\n  deepseek plugin list --json\n  deepseek plugin list --available --json"
 )]
 pub struct ListPluginsArgs {
     /// Only list plugins from this configured marketplace name.
@@ -105,8 +105,8 @@ pub struct ListPluginsArgs {
 
 #[derive(Debug, Parser)]
 #[command(
-    bin_name = "codex plugin remove",
-    after_help = "Examples:\n  codex plugin remove sample@debug\n  codex plugin remove sample --marketplace debug"
+    bin_name = "deepseek plugin remove",
+    after_help = "Examples:\n  deepseek plugin remove sample@debug\n  deepseek plugin remove sample --marketplace debug"
 )]
 pub struct RemovePluginArgs {
     /// Plugin selector to remove: either PLUGIN@MARKETPLACE or PLUGIN with --marketplace.
@@ -847,8 +847,8 @@ fn is_implicit_system_marketplace_root(
         && path_ends_with(
             root,
             &[
-                "codex-runtimes",
-                "codex-primary-runtime",
+                "deepseek-runtimes",
+                "deepseek-primary-runtime",
                 "plugins",
                 marketplace_name,
             ],

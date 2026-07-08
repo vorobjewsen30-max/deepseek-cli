@@ -113,7 +113,7 @@ async fn run_foreground_remote_control(
     root_config_overrides: CliConfigOverrides,
 ) -> anyhow::Result<()> {
     let socket_dir = tempfile::Builder::new()
-        .prefix("codex-rc-")
+        .prefix("deepseek-rc-")
         .tempdir_in("/tmp")
         .or_else(|_| tempfile::tempdir())
         .context("failed to create private app-server socket directory")?;

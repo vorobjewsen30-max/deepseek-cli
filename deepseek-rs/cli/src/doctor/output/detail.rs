@@ -227,7 +227,7 @@ fn install_details(parsed: &[ParsedDetail], options: HumanOutputOptions) -> Vec<
         expected: None,
     });
 
-    let path_entries = numbered_values(parsed, "PATH codex #");
+    let path_entries = numbered_values(parsed, "PATH deepseek #");
     if !path_entries.is_empty() {
         let total = path_entries.len();
         let shown = if options.show_all {
@@ -264,9 +264,9 @@ fn install_details(parsed: &[ParsedDetail], options: HumanOutputOptions) -> Vec<
             "managed by npm",
             "managed by bun",
             "managed package root",
-            "PATH codex entries",
+            "PATH deepseek entries",
         ],
-        &["PATH codex #"],
+        &["PATH deepseek #"],
     );
     out
 }

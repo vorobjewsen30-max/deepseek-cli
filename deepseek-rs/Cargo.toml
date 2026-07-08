@@ -66,6 +66,7 @@ members = [
     "lmstudio",
     "login",
     "deepseek-mcp",
+    "deepseek-chat",
     "mcp-server",
     "memories/read",
     "memories/write",
@@ -154,7 +155,7 @@ deepseek-apply-patch = { path = "apply-patch" }
 deepseek-arg0 = { path = "arg0" }
 deepseek-async-utils = { path = "async-utils" }
 deepseek-backend-client = { path = "backend-client" }
-deepseek-chatgpt = { path = "chatgpt" }
+deepseek-chatgpt = { path = "deepseek-chat" }
 deepseek-cli = { path = "cli" }
 deepseek-client = { path = "deepseek-client" }
 deepseek-collaboration-mode-templates = { path = "collaboration-mode-templates" }

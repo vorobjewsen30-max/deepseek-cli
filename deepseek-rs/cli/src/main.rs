@@ -80,7 +80,7 @@ use deepseek_features::is_known_feature_key;
 use deepseek_home::DeepSeekHomeUserInstructionsProvider;
 use deepseek_login::AuthManager;
 use deepseek_login::DeepSeekAuth;
-use deepseek_login::read_codex_access_token_from_env;
+use deepseek_login::read_deepseek_access_token_from_env;
 use deepseek_memories_write::clear_memory_roots_contents;
 use deepseek_models_manager::bundled_models_response;
 use deepseek_models_manager::manager::RefreshStrategy;
@@ -463,13 +463,13 @@ struct LoginCommand {
 
     #[arg(
         long = "with-api-key",
-        help = "Read the API key from stdin (e.g. `printenv DEEPSEEK_API_KEY | codex login --with-api-key`)"
+        help = "Read the API key from stdin (e.g. `printenv DEEPSEEK_API_KEY | deepseek login --with-api-key`)"
     )]
     with_api_key: bool,
 
     #[arg(
         long = "with-access-token",
-        help = "Read the access token from stdin (e.g. `printenv DEEPSEEK_ACCESS_TOKEN | codex login --with-access-token`)"
+        help = "Read the access token from stdin (e.g. `printenv DEEPSEEK_ACCESS_TOKEN | deepseek login --with-access-token`)"
     )]
     with_access_token: bool,
 
@@ -800,7 +800,7 @@ fn run_update_command() -> anyhow::Result<()> {
     #[cfg(debug_assertions)]
     {
         anyhow::bail!(
-            "`codex update` is not available in debug builds. Install a release build of DeepSeek to use this command."
+            "`deepseek update` is not available in debug builds. Install a release build of DeepSeek to use this command."
         );
     }
 
@@ -866,8 +866,8 @@ fn delete_action(target: &str, force: bool) -> anyhow::Result<deepseek_tui::Sess
 async fn run_debug_app_server_command(cmd: DebugAppServerCommand) -> anyhow::Result<()> {
     match cmd.subcommand {
         DebugAppServerSubcommand::SendMessageV2(cmd) => {
-            let codex_bin = std::env::current_exe()?;
-            deepseek_app_server_test_client::send_message_v2(&codex_bin, &[], cmd.user_message, &None)
+            let deepseek_bin = std::env::current_exe()?;
+            deepseek_app_server_test_client::send_message_v2(&deepseek_bin, &[], cmd.user_message, &None)
                 .await
         }
     }
@@ -1024,7 +1024,7 @@ async fn cli_main(
                 root_remote_auth_token_env.as_deref(),
                 "review",
             )?;
-            let mut exec_cli = ExecCli::try_parse_from(["codex", "exec"])?;
+            let mut exec_cli = ExecCli::try_parse_from(["deepseek", "exec"])?;
             exec_cli
                 .shared
                 .inherit_exec_root_options(&interactive.shared);
@@ -1365,7 +1365,7 @@ async fn cli_main(
                         .await;
                     } else if login_cli.api_key.is_some() {
                         eprintln!(
-                            "The --api-key flag is no longer supported. Pipe the key instead, e.g. `printenv DEEPSEEK_API_KEY | codex login --with-api-key`."
+                            "The --api-key flag is no longer supported. Pipe the key instead, e.g. `printenv DEEPSEEK_API_KEY | deepseek login --with-api-key`."
                         );
                         std::process::exit(1);
                     } else if login_cli.with_api_key {
@@ -1484,7 +1484,7 @@ async fn cli_main(
             #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "windows")))]
             {
                 let _ = loader_overrides;
-                anyhow::bail!("`codex sandbox` is not supported on this operating system");
+                anyhow::bail!("`deepseek sandbox` is not supported on this operating system");
             }
         }
         Some(Subcommand::Debug(DebugCommand { subcommand })) => match subcommand {
@@ -1669,7 +1669,7 @@ fn profile_v2_for_subcommand<'a>(
             subcommand: DebugSubcommand::PromptInput(_),
         }) => Ok(Some(profile_v2)),
         _ => anyhow::bail!(
-            "--profile only applies to runtime commands and `deepseek mcp`: `codex`, `codex exec`, `codex review`, `deepseek resume`, `codex archive`, `codex delete`, `codex unarchive`, `deepseek fork`, `deepseek mcp`, `codex sandbox`, and `codex debug prompt-input`."
+            "--profile only applies to runtime commands and `deepseek mcp`: `deepseek`, `deepseek exec`, `deepseek review`, `deepseek resume`, `deepseek archive`, `deepseek delete`, `deepseek unarchive`, `deepseek fork`, `deepseek mcp`, `deepseek sandbox`, and `deepseek debug prompt-input`."
         ),
     }
 }
@@ -1680,12 +1680,12 @@ async fn run_exec_server_command(
     root_config_overrides: &CliConfigOverrides,
     strict_config: bool,
 ) -> anyhow::Result<()> {
-    let codex_self_exe = arg0_paths
-        .codex_self_exe
+    let deepseek_self_exe = arg0_paths
+        .deepseek_self_exe
         .clone()
         .ok_or_else(|| anyhow::anyhow!("DeepSeek executable path is not configured"))?;
     let runtime_paths = deepseek_exec_server::ExecServerRuntimePaths::new(
-        codex_self_exe,
+        deepseek_self_exe,
         arg0_paths.deepseek_linux_sandbox_exe.clone(),
     )?;
     if let Some(base_url) = cmd.remote {
@@ -1736,7 +1736,7 @@ async fn load_exec_server_remote_auth_provider(
     use_agent_identity_auth: bool,
 ) -> anyhow::Result<deepseek_api::SharedAuthProvider> {
     if use_agent_identity_auth {
-        let agent_identity_jwt = read_codex_access_token_from_env().ok_or_else(|| {
+        let agent_identity_jwt = read_deepseek_access_token_from_env().ok_or_else(|| {
             anyhow::anyhow!("DEEPSEEK_ACCESS_TOKEN is required when --use-agent-identity-auth is set")
         })?;
         let auth_route_config = config.auth_route_config();
@@ -1941,7 +1941,7 @@ async fn run_debug_prompt_input_command(
         approval_policy,
         sandbox_mode,
         cwd: shared.cwd,
-        codex_self_exe: arg0_paths.codex_self_exe,
+        deepseek_self_exe: arg0_paths.deepseek_self_exe,
         deepseek_linux_sandbox_exe: arg0_paths.deepseek_linux_sandbox_exe,
         main_execve_wrapper_exe: arg0_paths.main_execve_wrapper_exe,
         show_raw_agent_reasoning: shared.oss.then_some(true),
@@ -2060,12 +2060,12 @@ fn reject_remote_mode_for_subcommand(
 ) -> anyhow::Result<()> {
     if let Some(remote) = remote {
         anyhow::bail!(
-            "`--remote {remote}` is only supported for interactive TUI commands, not `codex {subcommand}`"
+            "`--remote {remote}` is only supported for interactive TUI commands, not `deepseek {subcommand}`"
         );
     }
     if remote_auth_token_env.is_some() {
         anyhow::bail!(
-            "`--remote-auth-token-env` is only supported for interactive TUI commands, not `codex {subcommand}`"
+            "`--remote-auth-token-env` is only supported for interactive TUI commands, not `deepseek {subcommand}`"
         );
     }
     Ok(())
@@ -2091,7 +2091,7 @@ fn reject_root_strict_config_for_subcommand(
 /// flag should be rejected after parsing.
 ///
 /// `--strict-config` is parsed on the root interactive CLI so commands like
-/// `codex --strict-config` continue to work for the TUI and for wrappers that
+/// `deepseek --strict-config` continue to work for the TUI and for wrappers that
 /// forward root options into another command shape. Clap will still accept that
 /// root flag before the dispatcher knows which subcommand the user selected, so
 /// unsupported subcommands need an explicit post-parse reject path.
@@ -2156,7 +2156,7 @@ fn reject_strict_config_for_unsupported_subcommand(
     subcommand: &str,
 ) -> anyhow::Result<()> {
     if strict_config {
-        anyhow::bail!("`--strict-config` is not supported for `codex {subcommand}`");
+        anyhow::bail!("`--strict-config` is not supported for `deepseek {subcommand}`");
     }
     Ok(())
 }
@@ -2369,7 +2369,7 @@ fn finalize_resume_interactive(
     mut resume_cli: TuiCli,
 ) -> TuiCli {
     // Start with the parsed interactive CLI so resume shares the same
-    // configuration surface area as `codex` without additional flags.
+    // configuration surface area as `deepseek` without additional flags.
     // Clap assigns the first positional to `session_id`. With `--last`, reinterpret it as the
     // prompt when no second positional prompt was provided.
     let resume_session_id = if last && resume_cli.prompt.is_none() {
@@ -2403,7 +2403,7 @@ fn finalize_fork_interactive(
     mut fork_cli: TuiCli,
 ) -> TuiCli {
     // Start with the parsed interactive CLI so fork shares the same
-    // configuration surface area as `codex` without additional flags.
+    // configuration surface area as `deepseek` without additional flags.
     // Clap assigns the first positional to `session_id`. With `--last`, reinterpret it as the
     // prompt when no second positional prompt was provided.
     let fork_session_id = if last && fork_cli.prompt.is_none() {
@@ -2486,7 +2486,7 @@ fn merge_interactive_cli_flags(interactive: &mut TuiCli, subcommand_cli: TuiCli)
 
 fn print_completion(cmd: CompletionCommand) {
     let mut app = MultitoolCli::command();
-    let name = "codex";
+    let name = "deepseek";
     generate(cmd.shell, &mut app, name, &mut std::io::stdout());
 }
 
@@ -2654,31 +2654,31 @@ mod tests {
 
     #[test]
     fn profile_v2_is_rejected_for_config_management_subcommands() {
-        assert!(profile_v2_for_args(&["codex", "--profile", "work", "features", "list"]).is_err());
+        assert!(profile_v2_for_args(&["deepseek", "--profile", "work", "features", "list"]).is_err());
     }
 
     #[test]
     fn profile_v2_is_allowed_for_runtime_subcommands() {
         assert_eq!(
-            profile_v2_for_args(&["codex", "--profile", "work", "resume"])
+            profile_v2_for_args(&["deepseek", "--profile", "work", "resume"])
                 .expect("resume supports profile-v2")
                 .as_deref(),
             Some("work")
         );
         assert_eq!(
-            profile_v2_for_args(&["codex", "--profile", "work", "debug", "prompt-input"])
+            profile_v2_for_args(&["deepseek", "--profile", "work", "debug", "prompt-input"])
                 .expect("debug prompt-input supports profile-v2")
                 .as_deref(),
             Some("work")
         );
         assert_eq!(
-            profile_v2_for_args(&["codex", "--profile", "work", "mcp", "list"])
+            profile_v2_for_args(&["deepseek", "--profile", "work", "mcp", "list"])
                 .expect("mcp supports profile-v2")
                 .as_deref(),
             Some("work")
         );
         assert_eq!(
-            profile_v2_for_args(&["codex", "--profile", "work", "sandbox"])
+            profile_v2_for_args(&["deepseek", "--profile", "work", "sandbox"])
                 .expect("sandbox supports config profile")
                 .as_deref(),
             Some("work")
@@ -2687,7 +2687,7 @@ mod tests {
 
     #[test]
     fn import_remains_an_interactive_prompt() {
-        let cli = MultitoolCli::try_parse_from(["codex", "import"]).expect("parse");
+        let cli = MultitoolCli::try_parse_from(["deepseek", "import"]).expect("parse");
 
         assert!(cli.subcommand.is_none());
         assert_eq!(cli.interactive.prompt.as_deref(), Some("import"));
@@ -2696,14 +2696,14 @@ mod tests {
     #[test]
     fn profile_v2_rejects_non_plain_names_at_parse_time() {
         assert!(
-            MultitoolCli::try_parse_from(["codex", "--profile", "nested/work", "resume"]).is_err()
+            MultitoolCli::try_parse_from(["deepseek", "--profile", "nested/work", "resume"]).is_err()
         );
     }
 
     #[test]
     fn exec_resume_last_accepts_prompt_positional() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "exec", "--json", "resume", "--last", "2+2"])
+            MultitoolCli::try_parse_from(["deepseek", "exec", "--json", "resume", "--last", "2+2"])
                 .expect("parse should succeed");
 
         let Some(Subcommand::Exec(exec)) = cli.subcommand else {
@@ -2721,7 +2721,7 @@ mod tests {
     #[test]
     fn exec_resume_accepts_output_flags_after_subcommand() {
         let cli = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "exec",
             "resume",
             "session-123",
@@ -2755,7 +2755,7 @@ mod tests {
     #[test]
     fn dangerous_bypass_conflicts_with_approval_policy() {
         let err = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "--dangerously-bypass-approvals-and-sandbox",
             "--ask-for-approval",
             "on-request",
@@ -2774,7 +2774,7 @@ mod tests {
     }
 
     fn default_app_server_socket_path() -> AbsolutePathBuf {
-        let deepseek_home = find_deepseek_home().expect("codex home");
+        let deepseek_home = find_deepseek_home().expect("deepseek home");
         deepseek_app_server::app_server_control_socket_path(&deepseek_home)
             .expect("default app-server socket path")
     }
@@ -2782,7 +2782,7 @@ mod tests {
     #[test]
     fn debug_prompt_input_parses_prompt_and_images() {
         let cli = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "debug",
             "prompt-input",
             "hello",
@@ -2808,7 +2808,7 @@ mod tests {
     #[test]
     fn debug_models_parses_bundled_flag() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "debug", "models", "--bundled"]).expect("parse");
+            MultitoolCli::try_parse_from(["deepseek", "debug", "models", "--bundled"]).expect("parse");
 
         let Some(Subcommand::Debug(DebugCommand {
             subcommand: DebugSubcommand::Models(cmd),
@@ -2838,19 +2838,19 @@ mod tests {
 
     #[test]
     fn plugin_marketplace_help_uses_plugin_namespace() {
-        let help = help_from_args(&["codex", "plugin", "marketplace", "--help"]);
+        let help = help_from_args(&["deepseek", "plugin", "marketplace", "--help"]);
         assert!(
-            help.contains("Usage: codex plugin marketplace [OPTIONS] <COMMAND>"),
+            help.contains("Usage: deepseek plugin marketplace [OPTIONS] <COMMAND>"),
             "{help}"
         );
 
         for (subcommand, usage) in [
-            ("add", "Usage: codex plugin marketplace add"),
-            ("list", "Usage: codex plugin marketplace list"),
-            ("upgrade", "Usage: codex plugin marketplace upgrade"),
-            ("remove", "Usage: codex plugin marketplace remove"),
+            ("add", "Usage: deepseek plugin marketplace add"),
+            ("list", "Usage: deepseek plugin marketplace list"),
+            ("upgrade", "Usage: deepseek plugin marketplace upgrade"),
+            ("remove", "Usage: deepseek plugin marketplace remove"),
         ] {
-            let help = help_from_args(&["codex", "plugin", "marketplace", subcommand, "--help"]);
+            let help = help_from_args(&["deepseek", "plugin", "marketplace", subcommand, "--help"]);
             assert!(help.contains(usage), "{help}");
         }
     }
@@ -2858,7 +2858,7 @@ mod tests {
     #[test]
     fn plugin_marketplace_add_parses_under_plugin() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "plugin", "marketplace", "add", "owner/repo"])
+            MultitoolCli::try_parse_from(["deepseek", "plugin", "marketplace", "add", "owner/repo"])
                 .expect("parse");
 
         assert!(matches!(cli.subcommand, Some(Subcommand::Plugin(_))));
@@ -2867,7 +2867,7 @@ mod tests {
     #[test]
     fn plugin_marketplace_upgrade_parses_under_plugin() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "plugin", "marketplace", "upgrade", "debug"])
+            MultitoolCli::try_parse_from(["deepseek", "plugin", "marketplace", "upgrade", "debug"])
                 .expect("parse");
 
         assert!(matches!(cli.subcommand, Some(Subcommand::Plugin(_))));
@@ -2876,7 +2876,7 @@ mod tests {
     #[test]
     fn plugin_add_parses_under_plugin() {
         let cli = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "plugin",
             "add",
             "sample",
@@ -2891,7 +2891,7 @@ mod tests {
     #[test]
     fn plugin_list_parses_under_plugin() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "plugin", "list", "--marketplace", "debug"])
+            MultitoolCli::try_parse_from(["deepseek", "plugin", "list", "--marketplace", "debug"])
                 .expect("parse");
 
         assert!(matches!(cli.subcommand, Some(Subcommand::Plugin(_))));
@@ -2900,7 +2900,7 @@ mod tests {
     #[test]
     fn plugin_remove_parses_under_plugin() {
         let cli = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "plugin",
             "remove",
             "sample",
@@ -2914,7 +2914,7 @@ mod tests {
 
     #[test]
     fn update_parses_as_update_subcommand() {
-        let cli = MultitoolCli::try_parse_from(["codex", "update"]).expect("parse");
+        let cli = MultitoolCli::try_parse_from(["deepseek", "update"]).expect("parse");
         assert!(matches!(cli.subcommand, Some(Subcommand::Update)));
     }
 
@@ -2922,7 +2922,7 @@ mod tests {
     fn archive_merges_scoped_tui_flags() {
         let (target, interactive, remote) = finalize_archive_from_args(
             [
-                "codex",
+                "deepseek",
                 "-C",
                 "/root",
                 "archive",
@@ -2968,7 +2968,7 @@ mod tests {
     #[test]
     fn sandbox_parses_permission_profile() {
         let cli = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "sandbox",
             "--permission-profile",
             ":workspace",
@@ -2989,7 +2989,7 @@ mod tests {
     #[test]
     fn sandbox_parses_legacy_permissions_profile_alias() {
         let cli = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "sandbox",
             "--permissions-profile",
             ":workspace",
@@ -3009,7 +3009,7 @@ mod tests {
     #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
     #[test]
     fn sandbox_help_only_shows_singular_permission_profile() {
-        let help = help_from_args(&["codex", "sandbox", "--help"]);
+        let help = help_from_args(&["deepseek", "sandbox", "--help"]);
         assert!(help.contains("--permission-profile"), "{help}");
         assert!(!help.contains("--permissions-profile"), "{help}");
     }
@@ -3018,7 +3018,7 @@ mod tests {
     #[test]
     fn sandbox_parses_permissions_profile_short_alias() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "sandbox", "-P", ":workspace", "--", "echo"])
+            MultitoolCli::try_parse_from(["deepseek", "sandbox", "-P", ":workspace", "--", "echo"])
                 .expect("parse");
 
         let Some(Subcommand::Sandbox(command)) = cli.subcommand else {
@@ -3033,7 +3033,7 @@ mod tests {
     #[test]
     fn sandbox_parses_config_profile() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "sandbox", "--profile", "work", "--", "echo"])
+            MultitoolCli::try_parse_from(["deepseek", "sandbox", "--profile", "work", "--", "echo"])
                 .expect("parse");
 
         let Some(Subcommand::Sandbox(command)) = cli.subcommand else {
@@ -3047,7 +3047,7 @@ mod tests {
     #[cfg(any(target_os = "macos", target_os = "linux", target_os = "windows"))]
     #[test]
     fn sandbox_rejects_explicit_profile_controls_without_profile() {
-        let err = MultitoolCli::try_parse_from(["codex", "sandbox", "-C", "/tmp"])
+        let err = MultitoolCli::try_parse_from(["deepseek", "sandbox", "-C", "/tmp"])
             .expect_err("parse should fail");
 
         assert_eq!(err.kind(), clap::error::ErrorKind::MissingRequiredArgument);
@@ -3056,7 +3056,7 @@ mod tests {
     #[test]
     fn plugin_marketplace_remove_parses_under_plugin() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "plugin", "marketplace", "remove", "debug"])
+            MultitoolCli::try_parse_from(["deepseek", "plugin", "marketplace", "remove", "debug"])
                 .expect("parse");
 
         assert!(matches!(cli.subcommand, Some(Subcommand::Plugin(_))));
@@ -3065,28 +3065,28 @@ mod tests {
     #[test]
     fn marketplace_no_longer_parses_at_top_level() {
         let add_result =
-            MultitoolCli::try_parse_from(["codex", "marketplace", "add", "owner/repo"]);
+            MultitoolCli::try_parse_from(["deepseek", "marketplace", "add", "owner/repo"]);
         assert!(add_result.is_err());
 
         let upgrade_result =
-            MultitoolCli::try_parse_from(["codex", "marketplace", "upgrade", "debug"]);
+            MultitoolCli::try_parse_from(["deepseek", "marketplace", "upgrade", "debug"]);
         assert!(upgrade_result.is_err());
 
         let remove_result =
-            MultitoolCli::try_parse_from(["codex", "marketplace", "remove", "debug"]);
+            MultitoolCli::try_parse_from(["deepseek", "marketplace", "remove", "debug"]);
         assert!(remove_result.is_err());
     }
 
     #[test]
     fn full_auto_no_longer_parses_at_top_level() {
-        let result = MultitoolCli::try_parse_from(["codex", "--full-auto"]);
+        let result = MultitoolCli::try_parse_from(["deepseek", "--full-auto"]);
 
         assert!(result.is_err());
     }
 
     #[test]
     fn exec_full_auto_reports_migration_path() {
-        let cli = MultitoolCli::try_parse_from(["codex", "exec", "--full-auto", "summarize"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "exec", "--full-auto", "summarize"])
             .expect("exec should accept removed flag long enough to report a migration path");
         let Some(Subcommand::Exec(exec)) = cli.subcommand else {
             panic!("expected exec subcommand");
@@ -3100,7 +3100,7 @@ mod tests {
 
     #[test]
     fn sandbox_full_auto_no_longer_parses() {
-        let result = MultitoolCli::try_parse_from(["codex", "sandbox", "--full-auto", "--"]);
+        let result = MultitoolCli::try_parse_from(["deepseek", "sandbox", "--full-auto", "--"]);
 
         assert!(result.is_err());
     }
@@ -3164,7 +3164,7 @@ mod tests {
             lines,
             vec![
                 "Token usage: total=2 input=0 output=2".to_string(),
-                "To continue this session, run codex resume 123e4567-e89b-12d3-a456-426614174000"
+                "To continue this session, run deepseek resume 123e4567-e89b-12d3-a456-426614174000"
                     .to_string(),
             ]
         );
@@ -3181,7 +3181,7 @@ mod tests {
             lines,
             vec![
                 "Token usage: total=2 input=0 output=2".to_string(),
-                "To continue this session, run codex resume 123e4567-e89b-12d3-a456-426614174000"
+                "To continue this session, run deepseek resume 123e4567-e89b-12d3-a456-426614174000"
                     .to_string(),
             ]
         );
@@ -3209,7 +3209,7 @@ mod tests {
             lines,
             vec![
                 "Token usage: total=2 input=0 output=2".to_string(),
-                "To continue this session, run codex resume, then select my-thread (123e4567-e89b-12d3-a456-426614174000)".to_string(),
+                "To continue this session, run deepseek resume, then select my-thread (123e4567-e89b-12d3-a456-426614174000)".to_string(),
             ]
         );
     }
@@ -3217,7 +3217,7 @@ mod tests {
     #[test]
     fn resume_model_flag_applies_when_no_root_flags() {
         let interactive =
-            finalize_resume_from_args(["codex", "resume", "-m", "gpt-5.1-test"].as_ref());
+            finalize_resume_from_args(["deepseek", "resume", "-m", "gpt-5.1-test"].as_ref());
 
         assert_eq!(interactive.model.as_deref(), Some("gpt-5.1-test"));
         assert!(interactive.resume_picker);
@@ -3227,7 +3227,7 @@ mod tests {
 
     #[test]
     fn resume_picker_logic_none_and_not_last() {
-        let interactive = finalize_resume_from_args(["codex", "resume"].as_ref());
+        let interactive = finalize_resume_from_args(["deepseek", "resume"].as_ref());
         assert!(interactive.resume_picker);
         assert!(!interactive.resume_last);
         assert_eq!(interactive.resume_session_id, None);
@@ -3236,7 +3236,7 @@ mod tests {
 
     #[test]
     fn resume_picker_logic_last() {
-        let interactive = finalize_resume_from_args(["codex", "resume", "--last"].as_ref());
+        let interactive = finalize_resume_from_args(["deepseek", "resume", "--last"].as_ref());
         assert!(!interactive.resume_picker);
         assert!(interactive.resume_last);
         assert_eq!(interactive.resume_session_id, None);
@@ -3246,7 +3246,7 @@ mod tests {
     #[test]
     fn resume_last_accepts_prompt_positional() {
         let interactive = finalize_resume_from_args(
-            ["codex", "resume", "--last", "/compact focus on auth"].as_ref(),
+            ["deepseek", "resume", "--last", "/compact focus on auth"].as_ref(),
         );
 
         assert!(!interactive.resume_picker);
@@ -3261,7 +3261,7 @@ mod tests {
     #[test]
     fn resume_last_rejects_explicit_session_and_prompt() {
         let err =
-            MultitoolCli::try_parse_from(["codex", "resume", "--last", "1234", "continue here"])
+            MultitoolCli::try_parse_from(["deepseek", "resume", "--last", "1234", "continue here"])
                 .expect_err("--last with an explicit session and prompt should be rejected");
 
         assert_eq!(err.kind(), clap::error::ErrorKind::ArgumentConflict);
@@ -3269,7 +3269,7 @@ mod tests {
 
     #[test]
     fn resume_picker_logic_with_session_id() {
-        let interactive = finalize_resume_from_args(["codex", "resume", "1234"].as_ref());
+        let interactive = finalize_resume_from_args(["deepseek", "resume", "1234"].as_ref());
         assert!(!interactive.resume_picker);
         assert!(!interactive.resume_last);
         assert_eq!(interactive.resume_session_id.as_deref(), Some("1234"));
@@ -3279,7 +3279,7 @@ mod tests {
     #[test]
     fn resume_with_session_id_accepts_prompt_positional() {
         let interactive =
-            finalize_resume_from_args(["codex", "resume", "1234", "continue here"].as_ref());
+            finalize_resume_from_args(["deepseek", "resume", "1234", "continue here"].as_ref());
 
         assert!(!interactive.resume_picker);
         assert!(!interactive.resume_last);
@@ -3289,7 +3289,7 @@ mod tests {
 
     #[test]
     fn resume_all_flag_sets_show_all() {
-        let interactive = finalize_resume_from_args(["codex", "resume", "--all"].as_ref());
+        let interactive = finalize_resume_from_args(["deepseek", "resume", "--all"].as_ref());
         assert!(interactive.resume_picker);
         assert!(interactive.resume_show_all);
     }
@@ -3297,7 +3297,7 @@ mod tests {
     #[test]
     fn resume_include_non_interactive_flag_sets_source_filter_override() {
         let interactive =
-            finalize_resume_from_args(["codex", "resume", "--include-non-interactive"].as_ref());
+            finalize_resume_from_args(["deepseek", "resume", "--include-non-interactive"].as_ref());
 
         assert!(interactive.resume_picker);
         assert!(interactive.resume_include_non_interactive);
@@ -3307,7 +3307,7 @@ mod tests {
     fn resume_merges_option_flags() {
         let interactive = finalize_resume_from_args(
             [
-                "codex",
+                "deepseek",
                 "resume",
                 "sid",
                 "--oss",
@@ -3364,7 +3364,7 @@ mod tests {
     fn resume_merges_dangerously_bypass_flag() {
         let interactive = finalize_resume_from_args(
             [
-                "codex",
+                "deepseek",
                 "resume",
                 "--dangerously-bypass-approvals-and-sandbox",
             ]
@@ -3379,7 +3379,7 @@ mod tests {
     #[test]
     fn resume_merges_bypass_hook_trust_flag() {
         let interactive = finalize_resume_from_args(
-            ["codex", "resume", "--dangerously-bypass-hook-trust"].as_ref(),
+            ["deepseek", "resume", "--dangerously-bypass-hook-trust"].as_ref(),
         );
 
         assert!(interactive.bypass_hook_trust);
@@ -3390,7 +3390,7 @@ mod tests {
 
     #[test]
     fn fork_picker_logic_none_and_not_last() {
-        let interactive = finalize_fork_from_args(["codex", "fork"].as_ref());
+        let interactive = finalize_fork_from_args(["deepseek", "fork"].as_ref());
         assert!(interactive.fork_picker);
         assert!(!interactive.fork_last);
         assert_eq!(interactive.fork_session_id, None);
@@ -3399,7 +3399,7 @@ mod tests {
 
     #[test]
     fn fork_picker_logic_last() {
-        let interactive = finalize_fork_from_args(["codex", "fork", "--last"].as_ref());
+        let interactive = finalize_fork_from_args(["deepseek", "fork", "--last"].as_ref());
         assert!(!interactive.fork_picker);
         assert!(interactive.fork_last);
         assert_eq!(interactive.fork_session_id, None);
@@ -3409,7 +3409,7 @@ mod tests {
     #[test]
     fn fork_last_accepts_prompt_positional() {
         let interactive =
-            finalize_fork_from_args(["codex", "fork", "--last", "/compact focus on auth"].as_ref());
+            finalize_fork_from_args(["deepseek", "fork", "--last", "/compact focus on auth"].as_ref());
 
         assert!(!interactive.fork_picker);
         assert!(interactive.fork_last);
@@ -3423,7 +3423,7 @@ mod tests {
     #[test]
     fn fork_last_rejects_explicit_session_and_prompt() {
         let err =
-            MultitoolCli::try_parse_from(["codex", "fork", "--last", "1234", "continue here"])
+            MultitoolCli::try_parse_from(["deepseek", "fork", "--last", "1234", "continue here"])
                 .expect_err("--last with an explicit session and prompt should be rejected");
 
         assert_eq!(err.kind(), clap::error::ErrorKind::ArgumentConflict);
@@ -3431,7 +3431,7 @@ mod tests {
 
     #[test]
     fn fork_picker_logic_with_session_id() {
-        let interactive = finalize_fork_from_args(["codex", "fork", "1234"].as_ref());
+        let interactive = finalize_fork_from_args(["deepseek", "fork", "1234"].as_ref());
         assert!(!interactive.fork_picker);
         assert!(!interactive.fork_last);
         assert_eq!(interactive.fork_session_id.as_deref(), Some("1234"));
@@ -3441,7 +3441,7 @@ mod tests {
     #[test]
     fn fork_with_session_id_accepts_prompt_positional() {
         let interactive =
-            finalize_fork_from_args(["codex", "fork", "1234", "continue here"].as_ref());
+            finalize_fork_from_args(["deepseek", "fork", "1234", "continue here"].as_ref());
 
         assert!(!interactive.fork_picker);
         assert!(!interactive.fork_last);
@@ -3451,14 +3451,14 @@ mod tests {
 
     #[test]
     fn fork_all_flag_sets_show_all() {
-        let interactive = finalize_fork_from_args(["codex", "fork", "--all"].as_ref());
+        let interactive = finalize_fork_from_args(["deepseek", "fork", "--all"].as_ref());
         assert!(interactive.fork_picker);
         assert!(interactive.fork_show_all);
     }
 
     #[test]
     fn app_server_analytics_default_disabled_without_flag() {
-        let app_server = app_server_from_args(["codex", "app-server"].as_ref());
+        let app_server = app_server_from_args(["deepseek", "app-server"].as_ref());
         assert!(!app_server.analytics_default_enabled);
         assert!(!app_server.remote_control);
         assert_eq!(
@@ -3469,23 +3469,23 @@ mod tests {
 
     #[test]
     fn app_server_remote_control_startup_flag_enables_remote_control() {
-        let enabled = app_server_from_args(["codex", "app-server", "--remote-control"].as_ref());
+        let enabled = app_server_from_args(["deepseek", "app-server", "--remote-control"].as_ref());
         assert!(enabled.remote_control);
     }
 
     #[test]
     fn app_server_analytics_default_enabled_with_flag() {
         let app_server =
-            app_server_from_args(["codex", "app-server", "--analytics-default-enabled"].as_ref());
+            app_server_from_args(["deepseek", "app-server", "--analytics-default-enabled"].as_ref());
         assert!(app_server.analytics_default_enabled);
     }
 
     #[test]
     fn strict_config_parses_for_supported_commands() {
-        let cli = MultitoolCli::try_parse_from(["codex", "--strict-config"]).expect("parse");
+        let cli = MultitoolCli::try_parse_from(["deepseek", "--strict-config"]).expect("parse");
         assert!(cli.interactive.strict_config);
 
-        let cli = MultitoolCli::try_parse_from(["codex", "mcp-server", "--strict-config"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "mcp-server", "--strict-config"])
             .expect("parse");
         assert_matches!(
             cli.subcommand,
@@ -3495,7 +3495,7 @@ mod tests {
         );
 
         let cli =
-            MultitoolCli::try_parse_from(["codex", "review", "--strict-config", "--uncommitted"])
+            MultitoolCli::try_parse_from(["deepseek", "review", "--strict-config", "--uncommitted"])
                 .expect("parse");
         assert_matches!(
             cli.subcommand,
@@ -3505,7 +3505,7 @@ mod tests {
             }))
         );
 
-        let cli = MultitoolCli::try_parse_from(["codex", "exec-server", "--strict-config"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "exec-server", "--strict-config"])
             .expect("parse");
         assert_matches!(
             cli.subcommand,
@@ -3518,7 +3518,7 @@ mod tests {
 
     #[test]
     fn root_strict_config_is_supported_for_exec_server() {
-        let cli = MultitoolCli::try_parse_from(["codex", "--strict-config", "exec-server"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "--strict-config", "exec-server"])
             .expect("parse");
 
         reject_root_strict_config_for_subcommand(cli.interactive.strict_config, &cli.subcommand)
@@ -3527,7 +3527,7 @@ mod tests {
 
     #[test]
     fn root_strict_config_is_rejected_for_unsupported_subcommands() {
-        let cli = MultitoolCli::try_parse_from(["codex", "--strict-config", "mcp", "list"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "--strict-config", "mcp", "list"])
             .expect("parse");
         let err = reject_root_strict_config_for_subcommand(
             cli.interactive.strict_config,
@@ -3540,7 +3540,7 @@ mod tests {
             "`--strict-config` is not supported for `deepseek mcp`"
         );
 
-        let cli = MultitoolCli::try_parse_from(["codex", "--strict-config", "remote-control"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "--strict-config", "remote-control"])
             .expect("parse");
         let err = reject_root_strict_config_for_subcommand(
             cli.interactive.strict_config,
@@ -3550,14 +3550,14 @@ mod tests {
 
         assert_eq!(
             err.to_string(),
-            "`--strict-config` is not supported for `codex remote-control`"
+            "`--strict-config` is not supported for `deepseek remote-control`"
         );
     }
 
     #[test]
     fn app_server_subcommands_reject_strict_config() {
         let app_server =
-            app_server_from_args(["codex", "app-server", "--strict-config", "proxy"].as_ref());
+            app_server_from_args(["deepseek", "app-server", "--strict-config", "proxy"].as_ref());
         let err = reject_strict_config_for_app_server_subcommand(
             app_server.strict_config,
             app_server.subcommand.as_ref(),
@@ -3566,13 +3566,13 @@ mod tests {
 
         assert_eq!(
             err.to_string(),
-            "`--strict-config` is not supported for `codex app-server proxy`"
+            "`--strict-config` is not supported for `deepseek app-server proxy`"
         );
     }
 
     #[test]
     fn reject_remote_flag_for_remote_control() {
-        let cli = MultitoolCli::try_parse_from(["codex", "--remote", "unix://", "remote-control"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "--remote", "unix://", "remote-control"])
             .expect("parse");
         let Some(Subcommand::RemoteControl(remote_control)) = &cli.subcommand else {
             panic!("expected remote-control subcommand");
@@ -3591,7 +3591,7 @@ mod tests {
 
     #[test]
     fn remote_control_pair_parses() {
-        let cli = MultitoolCli::try_parse_from(["codex", "remote-control", "pair"]).expect("parse");
+        let cli = MultitoolCli::try_parse_from(["deepseek", "remote-control", "pair"]).expect("parse");
         let Some(Subcommand::RemoteControl(remote_control)) = &cli.subcommand else {
             panic!("expected remote-control subcommand");
         };
@@ -3600,38 +3600,38 @@ mod tests {
 
     #[test]
     fn remote_flag_parses_for_interactive_root() {
-        let cli = MultitoolCli::try_parse_from(["codex", "--remote", "unix://codex.sock"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "--remote", "unix://deepseek.sock"])
             .expect("parse");
-        assert_eq!(cli.remote.remote.as_deref(), Some("unix://codex.sock"));
+        assert_eq!(cli.remote.remote.as_deref(), Some("unix://deepseek.sock"));
     }
 
     #[test]
     fn remote_auth_token_env_flag_parses_for_interactive_root() {
         let cli = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "--remote-auth-token-env",
-            "CODEX_REMOTE_AUTH_TOKEN",
+            "DEEPSEEK_REMOTE_AUTH_TOKEN",
             "--remote",
             "ws://127.0.0.1:4500",
         ])
         .expect("parse");
         assert_eq!(
             cli.remote.remote_auth_token_env.as_deref(),
-            Some("CODEX_REMOTE_AUTH_TOKEN")
+            Some("DEEPSEEK_REMOTE_AUTH_TOKEN")
         );
     }
 
     #[test]
     fn remote_flag_parses_for_resume_subcommand() {
         let cli =
-            MultitoolCli::try_parse_from(["codex", "resume", "--remote", "unix://codex.sock"])
+            MultitoolCli::try_parse_from(["deepseek", "resume", "--remote", "unix://deepseek.sock"])
                 .expect("parse");
         let Subcommand::Resume(ResumeCommand { remote, .. }) =
             cli.subcommand.expect("resume present")
         else {
             panic!("expected resume subcommand");
         };
-        assert_eq!(remote.remote.as_deref(), Some("unix://codex.sock"));
+        assert_eq!(remote.remote.as_deref(), Some("unix://deepseek.sock"));
     }
 
     #[test]
@@ -3652,7 +3652,7 @@ mod tests {
     fn reject_remote_auth_token_env_for_non_interactive_subcommands() {
         let err = reject_remote_mode_for_subcommand(
             /*remote*/ None,
-            Some("CODEX_REMOTE_AUTH_TOKEN"),
+            Some("DEEPSEEK_REMOTE_AUTH_TOKEN"),
             "exec",
         )
         .expect_err("non-interactive subcommands should reject --remote-auth-token-env");
@@ -3670,7 +3670,7 @@ mod tests {
             });
         let err = reject_remote_mode_for_app_server_subcommand(
             /*remote*/ None,
-            Some("CODEX_REMOTE_AUTH_TOKEN"),
+            Some("DEEPSEEK_REMOTE_AUTH_TOKEN"),
             Some(&subcommand),
         )
         .expect_err("non-interactive app-server subcommands should reject --remote-auth-token-env");
@@ -3679,7 +3679,7 @@ mod tests {
 
     #[test]
     fn read_remote_auth_token_from_env_var_reports_missing_values() {
-        let err = read_remote_auth_token_from_env_var_with("CODEX_REMOTE_AUTH_TOKEN", |_| {
+        let err = read_remote_auth_token_from_env_var_with("DEEPSEEK_REMOTE_AUTH_TOKEN", |_| {
             Err(std::env::VarError::NotPresent)
         })
         .expect_err("missing env vars should be rejected");
@@ -3689,7 +3689,7 @@ mod tests {
     #[test]
     fn read_remote_auth_token_from_env_var_trims_values() {
         let auth_token =
-            read_remote_auth_token_from_env_var_with("CODEX_REMOTE_AUTH_TOKEN", |_| {
+            read_remote_auth_token_from_env_var_with("DEEPSEEK_REMOTE_AUTH_TOKEN", |_| {
                 Ok("  bearer-token  ".to_string())
             })
             .expect("env var should parse");
@@ -3698,7 +3698,7 @@ mod tests {
 
     #[test]
     fn read_remote_auth_token_from_env_var_rejects_empty_values() {
-        let err = read_remote_auth_token_from_env_var_with("CODEX_REMOTE_AUTH_TOKEN", |_| {
+        let err = read_remote_auth_token_from_env_var_with("DEEPSEEK_REMOTE_AUTH_TOKEN", |_| {
             Ok(" \n\t ".to_string())
         })
         .expect_err("empty env vars should be rejected");
@@ -3708,7 +3708,7 @@ mod tests {
     #[test]
     fn app_server_listen_websocket_url_parses() {
         let app_server = app_server_from_args(
-            ["codex", "app-server", "--listen", "ws://127.0.0.1:4500"].as_ref(),
+            ["deepseek", "app-server", "--listen", "ws://127.0.0.1:4500"].as_ref(),
         );
         assert_eq!(
             app_server.listen,
@@ -3721,7 +3721,7 @@ mod tests {
     #[test]
     fn app_server_listen_stdio_url_parses() {
         let app_server =
-            app_server_from_args(["codex", "app-server", "--listen", "stdio://"].as_ref());
+            app_server_from_args(["deepseek", "app-server", "--listen", "stdio://"].as_ref());
         assert_eq!(
             app_server.listen,
             deepseek_app_server::AppServerTransport::Stdio
@@ -3730,14 +3730,14 @@ mod tests {
 
     #[test]
     fn app_server_stdio_flag_parses() {
-        let app_server = app_server_from_args(["codex", "app-server", "--stdio"].as_ref());
+        let app_server = app_server_from_args(["deepseek", "app-server", "--stdio"].as_ref());
         assert!(app_server.stdio);
     }
 
     #[test]
     fn app_server_stdio_flag_conflicts_with_listen() {
         let err = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "app-server",
             "--stdio",
             "--listen",
@@ -3750,7 +3750,7 @@ mod tests {
     #[test]
     fn app_server_listen_unix_socket_url_parses() {
         let app_server =
-            app_server_from_args(["codex", "app-server", "--listen", "unix://"].as_ref());
+            app_server_from_args(["deepseek", "app-server", "--listen", "unix://"].as_ref());
         assert_eq!(
             app_server.listen,
             deepseek_app_server::AppServerTransport::UnixSocket {
@@ -3762,12 +3762,12 @@ mod tests {
     #[test]
     fn app_server_listen_unix_socket_path_parses() {
         let app_server = app_server_from_args(
-            ["codex", "app-server", "--listen", "unix:///tmp/codex.sock"].as_ref(),
+            ["deepseek", "app-server", "--listen", "unix:///tmp/deepseek.sock"].as_ref(),
         );
         assert_eq!(
             app_server.listen,
             deepseek_app_server::AppServerTransport::UnixSocket {
-                socket_path: AbsolutePathBuf::from_absolute_path("/tmp/codex.sock")
+                socket_path: AbsolutePathBuf::from_absolute_path("/tmp/deepseek.sock")
                     .expect("absolute path should parse")
             }
         );
@@ -3775,20 +3775,20 @@ mod tests {
 
     #[test]
     fn app_server_listen_off_parses() {
-        let app_server = app_server_from_args(["codex", "app-server", "--listen", "off"].as_ref());
+        let app_server = app_server_from_args(["deepseek", "app-server", "--listen", "off"].as_ref());
         assert_eq!(app_server.listen, deepseek_app_server::AppServerTransport::Off);
     }
 
     #[test]
     fn app_server_listen_invalid_url_fails_to_parse() {
         let parse_result =
-            MultitoolCli::try_parse_from(["codex", "app-server", "--listen", "http://foo"]);
+            MultitoolCli::try_parse_from(["deepseek", "app-server", "--listen", "http://foo"]);
         assert!(parse_result.is_err());
     }
 
     #[test]
     fn app_server_proxy_subcommand_parses() {
-        let app_server = app_server_from_args(["codex", "app-server", "proxy"].as_ref());
+        let app_server = app_server_from_args(["deepseek", "app-server", "proxy"].as_ref());
         assert!(matches!(
             app_server.subcommand,
             Some(AppServerSubcommand::Proxy(AppServerProxyCommand {
@@ -3802,7 +3802,7 @@ mod tests {
         assert!(matches!(
             app_server_from_args(
                 [
-                    "codex",
+                    "deepseek",
                     "app-server",
                     "daemon",
                     "bootstrap",
@@ -3818,20 +3818,20 @@ mod tests {
             }))
         ));
         assert!(matches!(
-            app_server_from_args(["codex", "app-server", "daemon", "start"].as_ref()).subcommand,
+            app_server_from_args(["deepseek", "app-server", "daemon", "start"].as_ref()).subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
                 subcommand: AppServerDaemonSubcommand::Start
             }))
         ));
         assert!(matches!(
-            app_server_from_args(["codex", "app-server", "daemon", "restart"].as_ref()).subcommand,
+            app_server_from_args(["deepseek", "app-server", "daemon", "restart"].as_ref()).subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
                 subcommand: AppServerDaemonSubcommand::Restart
             }))
         ));
         assert!(matches!(
             app_server_from_args(
-                ["codex", "app-server", "daemon", "enable-remote-control"].as_ref()
+                ["deepseek", "app-server", "daemon", "enable-remote-control"].as_ref()
             )
             .subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
@@ -3840,7 +3840,7 @@ mod tests {
         ));
         assert!(matches!(
             app_server_from_args(
-                ["codex", "app-server", "daemon", "disable-remote-control"].as_ref()
+                ["deepseek", "app-server", "daemon", "disable-remote-control"].as_ref()
             )
             .subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
@@ -3848,13 +3848,13 @@ mod tests {
             }))
         ));
         assert!(matches!(
-            app_server_from_args(["codex", "app-server", "daemon", "stop"].as_ref()).subcommand,
+            app_server_from_args(["deepseek", "app-server", "daemon", "stop"].as_ref()).subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
                 subcommand: AppServerDaemonSubcommand::Stop
             }))
         ));
         assert!(matches!(
-            app_server_from_args(["codex", "app-server", "daemon", "version"].as_ref()).subcommand,
+            app_server_from_args(["deepseek", "app-server", "daemon", "version"].as_ref()).subcommand,
             Some(AppServerSubcommand::Daemon(AppServerDaemonCommand {
                 subcommand: AppServerDaemonSubcommand::Version
             }))
@@ -3864,14 +3864,14 @@ mod tests {
     #[test]
     fn app_server_proxy_sock_path_parses() {
         let app_server =
-            app_server_from_args(["codex", "app-server", "proxy", "--sock", "codex.sock"].as_ref());
+            app_server_from_args(["deepseek", "app-server", "proxy", "--sock", "deepseek.sock"].as_ref());
         let Some(AppServerSubcommand::Proxy(proxy)) = app_server.subcommand else {
             panic!("expected proxy subcommand");
         };
         assert_eq!(
             proxy.socket_path,
             Some(
-                AbsolutePathBuf::relative_to_current_dir("codex.sock")
+                AbsolutePathBuf::relative_to_current_dir("deepseek.sock")
                     .expect("relative path should resolve")
             )
         );
@@ -3882,7 +3882,7 @@ mod tests {
         let subcommand = AppServerSubcommand::Proxy(AppServerProxyCommand { socket_path: None });
         let err = reject_remote_mode_for_app_server_subcommand(
             /*remote*/ None,
-            Some("CODEX_REMOTE_AUTH_TOKEN"),
+            Some("DEEPSEEK_REMOTE_AUTH_TOKEN"),
             Some(&subcommand),
         )
         .expect_err("app-server proxy should reject --remote-auth-token-env");
@@ -3896,7 +3896,7 @@ mod tests {
         });
         let err = reject_remote_mode_for_app_server_subcommand(
             /*remote*/ None,
-            Some("CODEX_REMOTE_AUTH_TOKEN"),
+            Some("DEEPSEEK_REMOTE_AUTH_TOKEN"),
             Some(&subcommand),
         )
         .expect_err("app-server daemon version should reject --remote-auth-token-env");
@@ -3907,12 +3907,12 @@ mod tests {
     fn app_server_capability_token_flags_parse() {
         let app_server = app_server_from_args(
             [
-                "codex",
+                "deepseek",
                 "app-server",
                 "--ws-auth",
                 "capability-token",
                 "--ws-token-file",
-                "/tmp/codex-token",
+                "/tmp/deepseek-token",
             ]
             .as_ref(),
         );
@@ -3922,7 +3922,7 @@ mod tests {
         );
         assert_eq!(
             app_server.auth.ws_token_file,
-            Some(PathBuf::from("/tmp/codex-token"))
+            Some(PathBuf::from("/tmp/deepseek-token"))
         );
     }
 
@@ -3930,12 +3930,12 @@ mod tests {
     fn app_server_signed_bearer_flags_parse() {
         let app_server = app_server_from_args(
             [
-                "codex",
+                "deepseek",
                 "app-server",
                 "--ws-auth",
                 "signed-bearer-token",
                 "--ws-shared-secret-file",
-                "/tmp/codex-secret",
+                "/tmp/deepseek-secret",
                 "--ws-issuer",
                 "issuer",
                 "--ws-audience",
@@ -3951,7 +3951,7 @@ mod tests {
         );
         assert_eq!(
             app_server.auth.ws_shared_secret_file,
-            Some(PathBuf::from("/tmp/codex-secret"))
+            Some(PathBuf::from("/tmp/deepseek-secret"))
         );
         assert_eq!(app_server.auth.ws_issuer.as_deref(), Some("issuer"));
         assert_eq!(app_server.auth.ws_audience.as_deref(), Some("audience"));
@@ -3961,7 +3961,7 @@ mod tests {
     #[test]
     fn app_server_rejects_removed_insecure_non_loopback_flag() {
         let parse_result = MultitoolCli::try_parse_from([
-            "codex",
+            "deepseek",
             "app-server",
             "--allow-unauthenticated-non-loopback-ws",
         ]);
@@ -3970,7 +3970,7 @@ mod tests {
 
     #[test]
     fn features_enable_parses_feature_name() {
-        let cli = MultitoolCli::try_parse_from(["codex", "features", "enable", "unified_exec"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "features", "enable", "unified_exec"])
             .expect("parse should succeed");
         let Some(Subcommand::Features(FeaturesCli { sub })) = cli.subcommand else {
             panic!("expected features subcommand");
@@ -3983,7 +3983,7 @@ mod tests {
 
     #[test]
     fn features_disable_parses_feature_name() {
-        let cli = MultitoolCli::try_parse_from(["codex", "features", "disable", "shell_tool"])
+        let cli = MultitoolCli::try_parse_from(["deepseek", "features", "disable", "shell_tool"])
             .expect("parse should succeed");
         let Some(Subcommand::Features(FeaturesCli { sub })) = cli.subcommand else {
             panic!("expected features subcommand");
@@ -4072,7 +4072,7 @@ mod tests {
     }
 
     fn strict_config_feature_toggle_error(args: &[&str]) -> anyhow::Error {
-        let cli_args = std::iter::once("codex")
+        let cli_args = std::iter::once("deepseek")
             .chain(std::iter::once("--strict-config"))
             .chain(args.iter().copied());
         let cli = MultitoolCli::try_parse_from(cli_args).expect("parse should succeed");

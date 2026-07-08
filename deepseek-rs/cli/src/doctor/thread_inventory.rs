@@ -794,7 +794,7 @@ mod tests {
 
     impl Fixture {
         async fn new() -> Self {
-            let deepseek_home = TempDir::new().expect("codex home");
+            let deepseek_home = TempDir::new().expect("deepseek home");
             let sqlite_home = TempDir::new().expect("sqlite home");
             let _runtime = deepseek_state::StateRuntime::init(
                 sqlite_home.path().to_path_buf(),
